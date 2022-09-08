@@ -16,8 +16,8 @@ public class InfinadeckLocomotion : MonoBehaviour
 {
     public GameObject cameraRig;
 
-    [InfReadOnlyInEditor] public float xDistance;
-    [InfReadOnlyInEditor] public float yDistance;
+    public float xDistance;
+    public float yDistance;
 
     private float fixAngle;
     private float calcX;
