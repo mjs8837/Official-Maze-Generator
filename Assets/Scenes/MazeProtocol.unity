@@ -296,7 +296,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 685384144}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &685384146
 Camera:
   m_ObjectHideFlags: 0
@@ -543,6 +543,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfae042fa83559748b1090427770b46d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mazeLength: 50
+  mazeHeight: 50
+  mazeRows: 10
+  mazeColumns: 10
+  wallHeight: 5
 --- !u!4 &1624055331
 Transform:
   m_ObjectHideFlags: 0
