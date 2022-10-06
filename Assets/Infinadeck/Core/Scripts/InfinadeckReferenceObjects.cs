@@ -118,6 +118,7 @@ public class InfinadeckReferenceObjects : MonoBehaviour
         if (frameCount >= preferences.ReadInt("dynamicColorblindFrames")) { frameCount = 0; }
         if (Infinadeck.Infinadeck.GetTreadmillRunState())
         {
+            
             SyncColor(Color.green);
             if (preferences.ReadBool("colorblindMode"))
             {
