@@ -11,6 +11,8 @@ public class MazeCreation : MonoBehaviour
     public int mazeColumns = 10;
     public float wallHeight = 5.0f;
 
+    int numWalls;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -54,7 +56,7 @@ public class MazeCreation : MonoBehaviour
             }
         }
 
-        WallDestroyer(125);
+        WallDestroyer(Mathf.RoundToInt(numWalls * 0.60f));
     }
 
     //Creating a helper function to make the walls of the maze
@@ -64,6 +66,8 @@ public class MazeCreation : MonoBehaviour
         wall.name = name;
         wall.transform.position = position;
         wall.transform.localScale = scale;
+        wall.transform.SetParent(gameObject.transform);
+        numWalls++;
         wallList.Add(wall);
     }
 
