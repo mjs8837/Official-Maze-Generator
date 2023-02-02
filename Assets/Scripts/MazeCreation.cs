@@ -63,7 +63,7 @@ public class MazeCreation : MonoBehaviour
             }
         }
 
-        //WallDestroyer(Mathf.RoundToInt(numWalls * 0.60f));
+        WallDestroyer(Mathf.RoundToInt(numWalls * 0.60f));
     }
 
     //Creating a helper function to make the walls of the maze

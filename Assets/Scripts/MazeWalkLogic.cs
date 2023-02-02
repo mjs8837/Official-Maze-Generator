@@ -9,7 +9,7 @@ public class MazeWalkLogic : MonoBehaviour
     [SerializeField] private GameObject maze;
     MazeCreation mazeCreationScript;
     private InfinadeckLocomotion locomotion;
-    private float rotationScale = 5.0f;
+    private float rotationScale = 2.5f;
     private Vector3 distance;
 
     private Vector3 directionToEnd;
