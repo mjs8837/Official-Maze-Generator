@@ -11,13 +11,20 @@ public class MazeCreation : MonoBehaviour
     public int mazeColumns = 10;
     public float wallHeight = 5.0f;
 
-    int numWalls;
+    private int numWalls;
+
+    private Vector3 endPoint = new Vector3(47.5f, 3.5f, 47.5f);
+    public GameObject EndPointObject { get; private set; }
 
     // Start is called before the first frame update
     void Start()
     {
         wallList = new List<GameObject>();
         MazeCreator(mazeLength, mazeHeight, mazeRows, mazeColumns, wallHeight);
+
+        EndPointObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        EndPointObject.transform.position = endPoint;
+        EndPointObject.transform.localScale = new Vector3(1.0f, 100.0f, 1.0f);
     }
 
     // Update is called once per frame
@@ -41,9 +48,9 @@ public class MazeCreation : MonoBehaviour
         wallList.RemoveAt(0);
 
         //Creating the walls of the maze
-        for (int i = 0; i <= numRows; i++)
+        for (int i = 0; i < numRows; i++)
         {
-            for (int j = 0; j <= numColumns; j++)
+            for (int j = 0; j < numColumns; j++)
             {
                 xWallPos = new Vector3((i * 5) + 2.5f, 1.0f + (wallHeight / 2.0f), j * 5);
                 xWallScale = new Vector3(5.0f, wallHeight, 0.25f);

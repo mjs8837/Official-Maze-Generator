@@ -7,13 +7,17 @@ public class MazeWalkLogic : MonoBehaviour
     [SerializeField] private GameObject infinadeck;
     [SerializeField] private GameObject cameraRig;
     [SerializeField] private GameObject maze;
+    MazeCreation mazeCreationScript;
     private InfinadeckLocomotion locomotion;
-    private float rotationScale = 5.0f;
+    private float rotationScale = 2.5f;
     private Vector3 distance;
+
+    private Vector3 directionToEnd;
 
     // Start is called before the first frame update
     void Start()
     {
+        mazeCreationScript = maze.GetComponent<MazeCreation>();
         locomotion = infinadeck.GetComponent<InfinadeckCore>().locomotion.GetComponent<InfinadeckLocomotion>();
     }
 
@@ -22,6 +26,7 @@ public class MazeWalkLogic : MonoBehaviour
     {
         UpdateDistance();
         RotationMath(rotationScale);
+        directionToEnd = (mazeCreationScript.EndPointObject.transform.position - cameraRig.transform.position).normalized;
     }
 
     // MAKE THIS MODULAR (aka call from distance tracker)

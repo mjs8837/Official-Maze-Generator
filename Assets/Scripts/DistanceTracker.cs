@@ -12,12 +12,14 @@ public class DistanceTracker : MonoBehaviour
     private float maxDistance = 10.0f;
     private float locomotionConstraint = 0.00001f;
 
-    private bool isStarted, useTime = false;
+    private bool isStarted = false; 
+    [SerializeField] private bool useTime = false;
 
     // Start is called before the first frame update
     void Start()
     {
         locomotion = infinadeck.GetComponent<InfinadeckCore>().locomotion.GetComponent<InfinadeckLocomotion>();
+        Destroy(GameObject.Find("InfinadeckReferenceObjects(Clone)"));
     }
 
     // Update is called once per frame
