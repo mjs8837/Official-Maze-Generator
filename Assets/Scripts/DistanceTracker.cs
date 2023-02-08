@@ -30,6 +30,27 @@ public class DistanceTracker : MonoBehaviour
         TimeOrDistance();
 
         HandleSceneChange();
+
+        // DEBUGGING PURPOSES
+
+        /*if (distance.magnitude > 0.0f) { isStarted = true; }
+
+        distance.x += 0.1f;
+        distance.z += 0.1f;
+        transform.position += new Vector3(0.1f, 0.0f, 0.1f);
+
+        if (distance.magnitude > maxDistance)
+        {
+            transform.position = Vector3.zero;
+            if (SceneManager.GetActiveScene().name == "PreMaze")
+            {
+                SceneManager.LoadScene("MazeProtocol");
+            }
+            if (SceneManager.GetActiveScene().name == "MazeProtocol")
+            {
+                SceneManager.LoadScene("PreMaze");
+            }
+        }*/
     }
 
     // Helper function to calculate total distance traveled
@@ -38,6 +59,7 @@ public class DistanceTracker : MonoBehaviour
         // Getting the distance from the locomotion of the treadmill
         distance.x += Mathf.Abs(locomotion.xDistance);
         distance.z += Mathf.Abs(locomotion.yDistance);
+
         float totalDistance = distance.magnitude;
 
         return totalDistance;
@@ -50,7 +72,7 @@ public class DistanceTracker : MonoBehaviour
             // Checking if the user has traveled a certain distance
             if (!useTime)
             {
-                if (UpdateDistance() >= maxDistance) // Fix magic number
+                if (UpdateDistance() >= maxDistance)
                 {
                     SceneTransition();
                 }
@@ -85,10 +107,17 @@ public class DistanceTracker : MonoBehaviour
         // Set up an indicator for the player to stop moving
         Debug.Log("Stop moving");
 
-        // Handle logic to check if the user stopped moving and transport them to the maze
+        // Handle logic to check if the user stopped moving and transport them to the maze or back to pre maze
         if (Mathf.Abs(locomotion.xDistance) < locomotionConstraint && Mathf.Abs(locomotion.yDistance) < locomotionConstraint)
         {
-            SceneManager.LoadScene("MazeProtocol");
+            if (SceneManager.GetActiveScene().name == "MazeData")
+            {
+                SceneManager.LoadScene("MazeProtocol");
+            }
+            if (SceneManager.GetActiveScene().name == "MazeProtocol")
+            {
+                SceneManager.LoadScene("MazeData");
+            }
         }
     }
 }
