@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MazeWalkLogic : MonoBehaviour
 {
@@ -10,9 +11,7 @@ public class MazeWalkLogic : MonoBehaviour
     MazeCreation mazeCreationScript;
     private InfinadeckLocomotion locomotion;
     private float rotationScale = 2.5f;
-    private Vector3 distance;
-
-    private Vector3 directionToEnd;
+    //private Vector3 distance;
 
     // Start is called before the first frame update
     void Start()
@@ -24,12 +23,11 @@ public class MazeWalkLogic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        UpdateDistance();
+        //UpdateDistance();
         RotationMath(rotationScale);
-        directionToEnd = (mazeCreationScript.EndPointObject.transform.position - cameraRig.transform.position).normalized;
     }
 
-    // MAKE THIS MODULAR (aka call from distance tracker)
+/*    // MAKE THIS MODULAR (aka call from distance tracker)
     private float UpdateDistance()
     {
         // Getting the distance from the locomotion of the treadmill
@@ -38,7 +36,7 @@ public class MazeWalkLogic : MonoBehaviour
         float totalDistance = distance.magnitude;
 
         return totalDistance;
-    }
+    }*/
 
     // Helper function to rotate the maze based upon user movement speed
     private void RotationMath(float rotationFactor)
