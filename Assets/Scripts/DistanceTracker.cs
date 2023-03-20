@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 public class DistanceTracker : MonoBehaviour
 {
     [SerializeField] private GameObject infinadeck;
+    [SerializeField] private GameObject targetPrefab;
+
     private InfinadeckLocomotion locomotion;
     private float runTimer = 10.0f;
     private Vector3 distance;
@@ -13,11 +15,17 @@ public class DistanceTracker : MonoBehaviour
     private float locomotionConstraint = 0.00001f;
 
     private bool isStarted = false; 
-    [SerializeField] private bool useTime = false;
+
+    List<Vector3> positions = new List<Vector3>();
+    List<Vector3> idealPositions = new List<Vector3>();
+    List<Vector3> targets = new List<Vector3>();
 
     // Start is called before the first frame update
     void Start()
     {
+        targets.Add(new Vector3(Random.Range(-100.0f, 100.0f), transform.position.y, Random.Range(-100.0f, 100.0f)));
+        Instantiate(targetPrefab, targets[0], Quaternion.identity);
+
         locomotion = infinadeck.GetComponent<InfinadeckCore>().locomotion.GetComponent<InfinadeckLocomotion>();
         Destroy(GameObject.Find("InfinadeckReferenceObjects(Clone)"));
     }
@@ -26,8 +34,6 @@ public class DistanceTracker : MonoBehaviour
     void Update()
     {
         if (Mathf.Abs(locomotion.xDistance) > locomotionConstraint || Mathf.Abs(locomotion.yDistance) > locomotionConstraint) { isStarted = true; }
-
-        TimeOrDistance();
 
         HandleSceneChange();
 
@@ -53,6 +59,11 @@ public class DistanceTracker : MonoBehaviour
         }*/
     }
 
+    private void FixedUpdate()
+    {
+        positions.Add(transform.position);
+    }
+
     // Helper function to calculate total distance traveled
     private float UpdateDistance()
     {
@@ -65,33 +76,25 @@ public class DistanceTracker : MonoBehaviour
         return totalDistance;
     }
 
+    /// <summary>
+    /// Checking if the constraints are met to trigger a scene transition
+    /// </summary>
     private void HandleSceneChange()
     {
         if (isStarted)
         {
-            // Checking if the user has traveled a certain distance
-            if (!useTime)
+            if (runTimer > 0.0f)
             {
-                if (UpdateDistance() >= maxDistance)
-                {
-                    SceneTransition();
-                }
+                runTimer -= Time.deltaTime;
             }
             else
             {
-                if (runTimer > 0.0f)
-                {
-                    runTimer -= Time.deltaTime;
-                }
-                else
-                {
-                    SceneTransition();
-                }
+                SceneTransition();
             }
         }
     }
 
-    private void TimeOrDistance()
+    /*private void TimeOrDistance()
     {
         if (!isStarted)
         {
@@ -100,16 +103,29 @@ public class DistanceTracker : MonoBehaviour
                 useTime = !useTime;
             }
         }
-    }
+    }*/
 
+    /// <summary>
+    /// Switching the scene the user is currently in based on movement speed.
+    /// </summary>
     private void SceneTransition()
     {
         // Set up an indicator for the player to stop moving
         Debug.Log("Stop moving");
 
-        // Handle logic to check if the user stopped moving and transport them to the maze or back to pre maze
+        // Handle logic to check if the user stopped moving and transport them to the maze or back to pre/post maze
         if (Mathf.Abs(locomotion.xDistance) < locomotionConstraint && Mathf.Abs(locomotion.yDistance) < locomotionConstraint)
         {
+            for (int i = 0; i < positions.Count; i++)
+            {
+                FileWriter.WritePositions("User Position", positions[i]);
+            }
+
+            for (int i = 0; i < idealPositions.Count; i++)
+            {
+                FileWriter.WritePositions("Target Position", idealPositions[i]);
+            }
+
             if (SceneManager.GetActiveScene().name == "MazeData")
             {
                 SceneManager.LoadScene("MazeProtocol");
