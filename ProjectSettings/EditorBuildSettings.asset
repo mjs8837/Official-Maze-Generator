@@ -9,11 +9,14 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: a159cf2f43acb2d4496889cdbcaeb3c7
   - enabled: 1
-    path: Assets/Scenes/MazeData.unity
-    guid: 9fc0d4010bbf28b4594072e72b8655ab
+    path: Assets/Scenes/PreMazeData.unity
+    guid: 8fdbbe581c5268c4f96108d048131283
   - enabled: 1
     path: Assets/Scenes/MazeProtocol.unity
     guid: fa195d6c9ac9aad41848fc5e38a78aa7
+  - enabled: 1
+    path: Assets/Scenes/PostMazeData.unity
+    guid: 5a8ce76bfe0471341a37b6ed8d37c352
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 114f69eaf9a849c42ba8bb4826c68cb8, type: 2}
     Unity.XR.OpenVR.Settings: {fileID: 11400000, guid: 475f41a82dd38a445a84a3d133f32281, type: 2}

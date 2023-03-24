@@ -28,7 +28,7 @@ public class DistanceTracker : MonoBehaviour
             Instantiate(targetPrefab, targets[0], Quaternion.identity);
         }
 
-        if (SceneManager.GetActiveScene().name == "MazeData")
+        if (SceneManager.GetActiveScene().name == "PreMazeData" || SceneManager.GetActiveScene().name == "PostMazeData")
         {
             runTimer = 10.0f;
         }
@@ -39,8 +39,6 @@ public class DistanceTracker : MonoBehaviour
 
         locomotion = infinadeck.GetComponent<InfinadeckCore>().locomotion.GetComponent<InfinadeckLocomotion>();
         Destroy(GameObject.Find("InfinadeckReferenceObjects(Clone)"));
-
-        isStarted = true;
     }
 
     // Update is called once per frame
@@ -131,7 +129,7 @@ public class DistanceTracker : MonoBehaviour
         // Handle logic to check if the user stopped moving and transport them to the maze or back to pre/post maze
         if (Mathf.Abs(locomotion.xDistance) < locomotionConstraint && Mathf.Abs(locomotion.yDistance) < locomotionConstraint)
         {
-            if (SceneManager.GetActiveScene().name == "MazeData")
+            if (SceneManager.GetActiveScene().name == "PreMazeData" || SceneManager.GetActiveScene().name == "PostMazeData")
             {
                 for (int i = 0; i < positions.Count; i++)
                 {
@@ -143,13 +141,13 @@ public class DistanceTracker : MonoBehaviour
                 }
             }
 
-            if (SceneManager.GetActiveScene().name == "MazeData")
+            if (SceneManager.GetActiveScene().name == "PreMazeData")
             {
                 SceneManager.LoadScene("MazeProtocol");
             }
             if (SceneManager.GetActiveScene().name == "MazeProtocol")
             {
-                SceneManager.LoadScene("MazeData");
+                SceneManager.LoadScene("PostMazeData");
             }
         }
     }
