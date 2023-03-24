@@ -5,7 +5,8 @@ using System.IO;
 
 public static class FileWriter
 {
-    static string path;    
+    static string path;
+    static StreamWriter fileWriter = null;
 
     /// <summary>
     /// Static function to write vector data to a file
@@ -13,8 +14,7 @@ public static class FileWriter
     /// <param name="currentPoint">Vector3 to be written into the file</param>
     public static void WritePositions(string title, Vector3 point)
     {
-        path = "Data/PositionData.txt";
-        StreamWriter fileWriter = null;
+        path = "Data/PositionData" + System.DateTime.Now.Hour + "-" + System.DateTime.Now.Minute + ".txt";
 
         try
         {

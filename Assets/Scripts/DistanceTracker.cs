@@ -9,7 +9,7 @@ public class DistanceTracker : MonoBehaviour
     [SerializeField] private GameObject targetPrefab;
 
     private InfinadeckLocomotion locomotion;
-    private float runTimer = 10.0f;
+    private float runTimer;
     private Vector3 distance;
     private float maxDistance = 10.0f;
     private float locomotionConstraint = 0.00001f;
@@ -17,17 +17,30 @@ public class DistanceTracker : MonoBehaviour
     private bool isStarted = false; 
 
     List<Vector3> positions = new List<Vector3>();
-    List<Vector3> idealPositions = new List<Vector3>();
     List<Vector3> targets = new List<Vector3>();
 
     // Start is called before the first frame update
     void Start()
     {
-        targets.Add(new Vector3(Random.Range(-100.0f, 100.0f), transform.position.y, Random.Range(-100.0f, 100.0f)));
-        Instantiate(targetPrefab, targets[0], Quaternion.identity);
+        if (targetPrefab != null)
+        {
+            targets.Add(new Vector3(Random.Range(-100.0f, 100.0f), transform.position.y, Random.Range(-100.0f, 100.0f)));
+            Instantiate(targetPrefab, targets[0], Quaternion.identity);
+        }
+
+        if (SceneManager.GetActiveScene().name == "MazeData")
+        {
+            runTimer = 10.0f;
+        }
+        if (SceneManager.GetActiveScene().name == "MazeProtocol")
+        {
+            runTimer = 120.0f;
+        }
 
         locomotion = infinadeck.GetComponent<InfinadeckCore>().locomotion.GetComponent<InfinadeckLocomotion>();
         Destroy(GameObject.Find("InfinadeckReferenceObjects(Clone)"));
+
+        isStarted = true;
     }
 
     // Update is called once per frame
@@ -36,6 +49,8 @@ public class DistanceTracker : MonoBehaviour
         if (Mathf.Abs(locomotion.xDistance) > locomotionConstraint || Mathf.Abs(locomotion.yDistance) > locomotionConstraint) { isStarted = true; }
 
         HandleSceneChange();
+
+        positions.Add(transform.position);
 
         // DEBUGGING PURPOSES
 
@@ -61,7 +76,7 @@ public class DistanceTracker : MonoBehaviour
 
     private void FixedUpdate()
     {
-        positions.Add(transform.position);
+        
     }
 
     // Helper function to calculate total distance traveled
@@ -116,14 +131,16 @@ public class DistanceTracker : MonoBehaviour
         // Handle logic to check if the user stopped moving and transport them to the maze or back to pre/post maze
         if (Mathf.Abs(locomotion.xDistance) < locomotionConstraint && Mathf.Abs(locomotion.yDistance) < locomotionConstraint)
         {
-            for (int i = 0; i < positions.Count; i++)
+            if (SceneManager.GetActiveScene().name == "MazeData")
             {
-                FileWriter.WritePositions("User Position", positions[i]);
-            }
-
-            for (int i = 0; i < idealPositions.Count; i++)
-            {
-                FileWriter.WritePositions("Target Position", idealPositions[i]);
+                for (int i = 0; i < positions.Count; i++)
+                {
+                    FileWriter.WritePositions("User Position", positions[i]);
+                }
+                for (int i = 0; i < targets.Count; i++)
+                {
+                    FileWriter.WritePositions("Target Position " + i + 1, targets[i]);
+                }
             }
 
             if (SceneManager.GetActiveScene().name == "MazeData")
