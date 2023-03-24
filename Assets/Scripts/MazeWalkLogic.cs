@@ -7,6 +7,7 @@ public class MazeWalkLogic : MonoBehaviour
 {
     [SerializeField] private GameObject infinadeck;
     [SerializeField] private GameObject cameraRig;
+    [SerializeField] private Camera VRCam;
     [SerializeField] private GameObject maze;
     MazeCreation mazeCreationScript;
     private InfinadeckLocomotion locomotion;
@@ -24,7 +25,10 @@ public class MazeWalkLogic : MonoBehaviour
     void Update()
     {
         //UpdateDistance();
-        RotationMath(rotationScale);
+        //RotationMath(rotationScale);
+
+        //VRCam.transform.eulerAngles = new Vector3(VRCam.transform.eulerAngles.x, VRCam.transform.eulerAngles.y + 90.0f, VRCam.transform.eulerAngles.z);
+        //maze.transform.eulerAngles = new Vector3(0.0f, VRCam.transform.eulerAngles.y + 20.0f, 0.0f);
     }
 
 /*    // MAKE THIS MODULAR (aka call from distance tracker)

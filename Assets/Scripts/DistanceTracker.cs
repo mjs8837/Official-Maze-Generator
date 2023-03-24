@@ -30,11 +30,11 @@ public class DistanceTracker : MonoBehaviour
 
         if (SceneManager.GetActiveScene().name == "PreMazeData" || SceneManager.GetActiveScene().name == "PostMazeData")
         {
-            runTimer = 10.0f;
+            runTimer = 60.0f;
         }
         if (SceneManager.GetActiveScene().name == "MazeProtocol")
         {
-            runTimer = 120.0f;
+            runTimer = 600.0f;
         }
 
         locomotion = infinadeck.GetComponent<InfinadeckCore>().locomotion.GetComponent<InfinadeckLocomotion>();
