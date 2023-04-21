@@ -12,13 +12,19 @@ public class MazeWalkLogic : MonoBehaviour
     MazeCreation mazeCreationScript;
     private InfinadeckLocomotion locomotion;
     private float rotationScale = 2.5f;
-    //private Vector3 distance;
+
+    private Vector3 spawnPosition = new Vector3(4.5f, 0.0f, 4.5f);
 
     // Start is called before the first frame update
     void Start()
     {
         mazeCreationScript = maze.GetComponent<MazeCreation>();
         locomotion = infinadeck.GetComponent<InfinadeckCore>().locomotion.GetComponent<InfinadeckLocomotion>();
+
+        // Setting the initial position of the camera rig when the maze is created
+        spawnPosition.y = cameraRig.transform.position.y;
+        cameraRig.transform.position = spawnPosition;
+        cameraRig.transform.RotateAround(new Vector3(VRCam.transform.position.x, 0.0f, VRCam.transform.position.z), Vector3.up, 20.0f);
     }
 
     // Update is called once per frame
@@ -27,20 +33,24 @@ public class MazeWalkLogic : MonoBehaviour
         //UpdateDistance();
         //RotationMath(rotationScale);
 
+        //cameraRig.transform.RotateAround(new Vector3(VRCam.transform.position.x, 0.0f, VRCam.transform.position.z), Vector3.up, 20.0f * (Mathf.Abs(locomotion.xDistance) + Mathf.Abs(locomotion.yDistance)));
+        //cameraRig.transform.RotateAround(new Vector3(VRCam.transform.position.x, 0.0f, VRCam.transform.position.z), Vector3.up, 20.0f * (0.1f + 0.1f));
+
+
         //VRCam.transform.eulerAngles = new Vector3(VRCam.transform.eulerAngles.x, VRCam.transform.eulerAngles.y + 90.0f, VRCam.transform.eulerAngles.z);
         //maze.transform.eulerAngles = new Vector3(0.0f, VRCam.transform.eulerAngles.y + 20.0f, 0.0f);
     }
 
-/*    // MAKE THIS MODULAR (aka call from distance tracker)
-    private float UpdateDistance()
-    {
-        // Getting the distance from the locomotion of the treadmill
-        distance.x += Mathf.Abs(locomotion.xDistance);
-        distance.z += Mathf.Abs(locomotion.yDistance);
-        float totalDistance = distance.magnitude;
+    /*    // MAKE THIS MODULAR (aka call from distance tracker)
+        private float UpdateDistance()
+        {
+            // Getting the distance from the locomotion of the treadmill
+            distance.x += Mathf.Abs(locomotion.xDistance);
+            distance.z += Mathf.Abs(locomotion.yDistance);
+            float totalDistance = distance.magnitude;
 
-        return totalDistance;
-    }*/
+            return totalDistance;
+        }*/
 
     // Helper function to rotate the maze based upon user movement speed
     private void RotationMath(float rotationFactor)

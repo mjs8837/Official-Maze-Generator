@@ -12,14 +12,14 @@ public static class FileWriter
     /// Static function to write vector data to a file
     /// </summary>
     /// <param name="currentPoint">Vector3 to be written into the file</param>
-    public static void WritePositions(string title, Vector3 point)
+    public static void WritePositions(string fileTitle, string lineTitle, Vector3 point)
     {
-        path = "Data/PositionData" + System.DateTime.Now.Hour + "-" + System.DateTime.Now.Minute + ".txt";
+        path = "Data/PositionData-" + fileTitle + System.DateTime.Now.Hour + "-" + System.DateTime.Now.Minute + ".txt";
 
         try
         {
             fileWriter = new StreamWriter(path, true);
-            fileWriter.WriteLine(title + ": " + point.x + ", " + point.y);
+            fileWriter.WriteLine(lineTitle + ": " + point.x + ", " + point.y);
         }
         catch (System.Exception e)
         {
