@@ -24,12 +24,16 @@ public class MazeWalkLogic : MonoBehaviour
         // Setting the initial position of the camera rig when the maze is created
         spawnPosition.y = cameraRig.transform.position.y;
         cameraRig.transform.position = spawnPosition;
-        cameraRig.transform.RotateAround(new Vector3(VRCam.transform.position.x, 0.0f, VRCam.transform.position.z), Vector3.up, 20.0f);
+        /*cameraRig.transform.RotateAround(new Vector3(VRCam.transform.position.x, 0.0f, VRCam.transform.position.z), Vector3.up, 20.0f);*/
+
+        //cameraRig.transform.localEulerAngles = new Vector3(0.0f, 50.0f, 0.0f);
+        VRCam.transform.eulerAngles = new Vector3(0.0f, 50.0f, 0.0f);
     }
 
     // Update is called once per frame
     void Update()
     {
+        //VRCam.transform.eulerAngles += new Vector3(0.0f, 90.0f, 0.0f);
         //UpdateDistance();
         //RotationMath(rotationScale);
 

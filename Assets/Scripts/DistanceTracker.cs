@@ -56,7 +56,11 @@ public class DistanceTracker : MonoBehaviour
 
         if (isStarted)
         {
-            Destroy(targetObjs[0]);
+            if (SceneManager.GetActiveScene().name != "MazeProtocol")
+            {
+                Destroy(targetObjs[0]);
+            }
+
             positions.Add(transform.position);
         }
 
