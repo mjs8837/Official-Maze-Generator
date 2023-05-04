@@ -19,7 +19,7 @@ public static class FileWriter
         try
         {
             fileWriter = new StreamWriter(path, true);
-            fileWriter.WriteLine(lineTitle + ": " + point.x + ", " + point.y);
+            fileWriter.WriteLine(lineTitle + ": " + point.x + ", " + point.z);
         }
         catch (System.Exception e)
         {

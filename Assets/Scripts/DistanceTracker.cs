@@ -35,11 +35,17 @@ public class DistanceTracker : MonoBehaviour
         // Setting time to run based on the current scene
         if (SceneManager.GetActiveScene().name == "PreMazeData" || SceneManager.GetActiveScene().name == "PostMazeData")
         {
+            GameObject head = GameObject.Find("Head");
+            head.transform.eulerAngles = new Vector3(0.0f, 0.0f, 0.0f);
             runTimer = 60.0f;
         }
         if (SceneManager.GetActiveScene().name == "MazeProtocol")
         {
-            runTimer = 600.0f;
+            runTimer = 120.0f;
+            //runTimer = 600.0f;
+
+            GameObject head = GameObject.Find("Head");
+            head.transform.eulerAngles = new Vector3(0.0f, 20.0f, 0.0f);
         }
 
         locomotion = infinadeck.GetComponent<InfinadeckCore>().locomotion.GetComponent<InfinadeckLocomotion>();
