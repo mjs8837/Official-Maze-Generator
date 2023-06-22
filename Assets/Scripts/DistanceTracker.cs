@@ -7,164 +7,173 @@ public class DistanceTracker : MonoBehaviour
 {
     [SerializeField] private GameObject infinadeck;
     [SerializeField] private GameObject targetPrefab;
+    [SerializeField] private GameObject head;
 
     private InfinadeckLocomotion locomotion;
-    private float runTimer;
+    
+    private float runTimerStart;
     private Vector3 distance;
-    private float maxDistance = 10.0f;
-    private float locomotionConstraint = 0.00001f;
+    private Scene currentScene;
 
-    [SerializeField] private bool isStarted = false; 
+    [SerializeField] private float runTimer;
+    [SerializeField] private float angleOffset;
+    [SerializeField] private bool isStarted; 
 
-    List<Vector3> positions = new List<Vector3>();
-    List<GameObject> targetObjs = new List<GameObject>();
-    List<Vector3> targets = new List<Vector3>();
+    private List<Vector3> positions = new List<Vector3>();
+    private List<Vector3> targetPositions = new List<Vector3>();
+    private List<GameObject> targetObjs = new List<GameObject>();
+
+    private const float LOCOMOTION_CONSTRAINT = 0.00001f;
 
     // Start is called before the first frame update
     void Start()
     {
-        // Setting a starting target position
+        // Setting the current scene when first loaded in
+        currentScene = SceneManager.GetActiveScene();
+
+        // If there is a target prefab set, spawn a target where the user is facing
         if (targetPrefab != null)
         {
-            Vector3 tempPos = 100.0f * new Vector3(GetComponentInChildren<Camera>().transform.forward.x, 0.0f, GetComponentInChildren<Camera>().transform.forward.z);
-            tempPos.y = transform.position.y;
-            targets.Add(tempPos);
-            targetObjs.Add(Instantiate(targetPrefab, targets[0], Quaternion.identity));
+            // Getting the camera attached to this object
+            Camera camera = GetComponentInChildren<Camera>();
+
+            Vector3 tempPos = 100.0f * new Vector3(
+                camera.transform.forward.x, 
+                transform.position.y,
+                camera.transform.forward.z);
+
+            targetObjs.Add(Instantiate(targetPrefab, tempPos, Quaternion.identity));
+
+            StartCoroutine(HideTarget(targetObjs[0]));
         }
 
-        // Setting time to run based on the current scene
-        if (SceneManager.GetActiveScene().name == "PreMazeData" || SceneManager.GetActiveScene().name == "PostMazeData")
-        {
-            GameObject head = GameObject.Find("Head");
-            head.transform.eulerAngles = new Vector3(0.0f, 0.0f, 0.0f);
-            runTimer = 60.0f;
-        }
-        if (SceneManager.GetActiveScene().name == "MazeProtocol")
-        {
-            runTimer = 120.0f;
-            //runTimer = 600.0f;
+        head.transform.eulerAngles = new Vector3(0.0f, angleOffset, 0.0f);
 
-            GameObject head = GameObject.Find("Head");
-            head.transform.eulerAngles = new Vector3(0.0f, 20.0f, 0.0f);
-        }
+        runTimerStart = runTimer;
 
+        // Getting the infinadeck locomotion component and destroying the uneccessary objects in the scene
         locomotion = infinadeck.GetComponent<InfinadeckCore>().locomotion.GetComponent<InfinadeckLocomotion>();
         Destroy(GameObject.Find("InfinadeckReferenceObjects(Clone)"));
         Destroy(GameObject.Find("InfinadeckSplashscreen(Clone)"));
+
+        StartCoroutine(StartProtocol());
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-        if (Mathf.Abs(locomotion.xDistance) > locomotionConstraint || Mathf.Abs(locomotion.yDistance) > locomotionConstraint) { isStarted = true; }
-
-        HandleSceneChange();
-
         if (isStarted)
         {
-            if (SceneManager.GetActiveScene().name != "MazeProtocol")
-            {
-                Destroy(targetObjs[0]);
-            }
-
+            // Updating user positions and distance travled 
             positions.Add(transform.position);
+            UpdateDistance();
+
+            // Decrementing the run timer
+            if (runTimer > 0.0f)
+            {
+                runTimer -= Time.fixedDeltaTime;
+            }
+
+            // Plotting out the ideal path position
+            if (targetObjs.Count > 0)
+            {
+                targetPositions.Add(Vector3.Lerp(Vector3.zero, targetObjs[0].transform.position, (runTimerStart - runTimer) / runTimerStart));
+            }
         }
-
-        // DEBUGGING PURPOSES
-
-        /*if (distance.magnitude > 0.0f) { isStarted = true; }
-
-        distance.x += 0.1f;
-        distance.z += 0.1f;
-        transform.position += new Vector3(0.1f, 0.0f, 0.1f);
-
-        if (distance.magnitude > maxDistance)
-        {
-            transform.position = Vector3.zero;
-            if (SceneManager.GetActiveScene().name == "PreMaze")
-            {
-                SceneManager.LoadScene("MazeProtocol");
-            }
-            if (SceneManager.GetActiveScene().name == "MazeProtocol")
-            {
-                SceneManager.LoadScene("PreMaze");
-            }
-        }*/
     }
 
-    // Helper function to calculate total distance traveled
-    private float UpdateDistance()
+    /// <summary>
+    /// Creating a coroutine to run at the start of the pre and post maze to set the protocol to start
+    /// </summary>
+    /// <returns>Waiting until movement is detected</returns>
+    private IEnumerator StartProtocol()
+    {
+        // Waiting until there is any movement
+        yield return new WaitUntil(() => 
+            Mathf.Abs(locomotion.xDistance) > LOCOMOTION_CONSTRAINT ||
+            Mathf.Abs(locomotion.yDistance) > LOCOMOTION_CONSTRAINT);
+
+        // Starting the protocol
+        isStarted = true;
+        StartCoroutine(HandleSceneChange());
+    }
+
+    /// <summary>
+    /// Creating a coroutine to run at the start of the pre and post maze to hide the target when appropriate
+    /// </summary>
+    /// <param name="target">The current target</param>
+    /// <returns>Waits until the user has moved and delays another 2 seconds</returns>
+    private IEnumerator HideTarget(GameObject target)
+    {
+        yield return new WaitUntil(() => isStarted);
+        yield return new WaitForSeconds(2.0f);
+
+        target.SetActive(false);
+    }
+
+    /// <summary>
+    /// Helper function to update distance traveled
+    /// </summary>
+    private void UpdateDistance()
     {
         // Getting the distance from the locomotion of the treadmill
         distance.x += Mathf.Abs(locomotion.xDistance);
         distance.z += Mathf.Abs(locomotion.yDistance);
-
-        float totalDistance = distance.magnitude;
-
-        return totalDistance;
     }
 
     /// <summary>
     /// Checking if the constraints are met to trigger a scene transition
     /// </summary>
-    private void HandleSceneChange()
+    private IEnumerator HandleSceneChange()
     {
-        if (isStarted)
-        {
-            if (runTimer > 0.0f)
-            {
-                runTimer -= Time.deltaTime;
-            }
-            else
-            {
-                SceneTransition();
-            }
-        }
-    }
+        // Waiting until the run timer is below 0
+        yield return new WaitUntil(() => runTimer <= 0.0f);
 
-    /*private void TimeOrDistance()
-    {
-        if (!isStarted)
-        {
-            if (Input.GetKeyDown(KeyCode.S))
-            {
-                useTime = !useTime;
-            }
-        }
-    }*/
+        // Transitioning to the next scene or quitting the application
+        StartCoroutine(SceneTransition());
+    }
 
     /// <summary>
     /// Switching the scene the user is currently in based on movement speed.
     /// </summary>
-    private void SceneTransition()
+    private IEnumerator SceneTransition()
     {
         // Set up an indicator for the player to stop moving
         Debug.Log("Stop moving");
 
-        // Handle logic to check if the user stopped moving and transport them to the maze or back to pre/post maze
-        if (Mathf.Abs(locomotion.xDistance) < locomotionConstraint && Mathf.Abs(locomotion.yDistance) < locomotionConstraint)
+        // Wait until the user has stopped moving to progress further
+        yield return new WaitUntil(() =>
+            Mathf.Abs(locomotion.xDistance) < LOCOMOTION_CONSTRAINT &&
+            Mathf.Abs(locomotion.yDistance) < LOCOMOTION_CONSTRAINT);
+
+        if (currentScene.buildIndex == 1 || 
+            currentScene.buildIndex == 3)
         {
-            if (SceneManager.GetActiveScene().name == "PreMazeData" || SceneManager.GetActiveScene().name == "PostMazeData")
+            // Printing out user positions
+            for (int i = 0; i < positions.Count; i++)
             {
-                for (int i = 0; i < positions.Count; i++)
-                {
-                    FileWriter.WritePositions(SceneManager.GetActiveScene().name,"User Position", positions[i]);
-                }
-                for (int i = 0; i < targets.Count; i++)
-                {
-                    FileWriter.WritePositions(SceneManager.GetActiveScene().name, "Target Position " + i + 1, targets[i]);
-                }
+                FileWriter.WritePositions(currentScene.name,"User Position", positions[i], i * Time.fixedDeltaTime);
+            }
+        
+            // Printing out the ideal path positions based on where the target spawns
+            for (int i = 0; i < targetPositions.Count; i++)
+            {
+                FileWriter.WritePositions(currentScene.name, "Ideal Position", targetPositions[i], i * Time.fixedDeltaTime);
             }
 
-            // Loading a new scene based on which one is currently open
-            if (SceneManager.GetActiveScene().name == "PreMazeData")
-            {
-                SceneManager.LoadScene("MazeProtocol");
-            }
-            if (SceneManager.GetActiveScene().name == "MazeProtocol")
-            {
-                SceneManager.LoadScene("PostMazeData");
-            }
+            // Plotting out extra useful information
+            FileWriter.WriteValue(currentScene.name, "Total Distance Traveled (in meters)", distance.magnitude);
+            FileWriter.WriteValue(currentScene.name, "Total Time (in seconds)", runTimerStart);
+        }
+        
+        // Loading the next scene in the order of the current build indices if there is a next one
+        // Otherwise quits the program
+        if (currentScene.buildIndex != 3)
+        {
+            SceneManager.LoadScene(currentScene.buildIndex + 1);
+        }
+        else
+        {
+            Application.Quit();
         }
     }
 }
