@@ -22,6 +22,7 @@ public class DistanceTracker : MonoBehaviour
     private List<Vector3> positions = new List<Vector3>();
     private List<Vector3> targetPositions = new List<Vector3>();
     private List<GameObject> targetObjs = new List<GameObject>();
+    private int numWallCollisions = 0;
 
     private const float LOCOMOTION_CONSTRAINT = 0.00001f;
 
@@ -145,26 +146,25 @@ public class DistanceTracker : MonoBehaviour
             Mathf.Abs(locomotion.xDistance) < LOCOMOTION_CONSTRAINT &&
             Mathf.Abs(locomotion.yDistance) < LOCOMOTION_CONSTRAINT);
 
-        if (currentScene.buildIndex == 1 || 
-            currentScene.buildIndex == 3)
+        // Printing out user positions
+        for (int i = 0; i < positions.Count; i++)
         {
-            // Printing out user positions
-            for (int i = 0; i < positions.Count; i++)
-            {
-                FileWriter.WritePositions(currentScene.name,"User Position", positions[i], i * Time.fixedDeltaTime);
-            }
-        
+            FileWriter.WritePositions(currentScene.name, "User Position", positions[i], i * Time.fixedDeltaTime);
+        }
+
+        if (targetObjs.Count > 0)
+        {
             // Printing out the ideal path positions based on where the target spawns
             for (int i = 0; i < targetPositions.Count; i++)
             {
                 FileWriter.WritePositions(currentScene.name, "Ideal Position", targetPositions[i], i * Time.fixedDeltaTime);
             }
-
-            // Plotting out extra useful information
-            FileWriter.WriteValue(currentScene.name, "Total Distance Traveled (in meters)", distance.magnitude);
-            FileWriter.WriteValue(currentScene.name, "Total Time (in seconds)", runTimerStart);
         }
-        
+
+        // Plotting out extra useful information
+        FileWriter.WriteValue(currentScene.name, "Total Distance Traveled (in meters)", distance.magnitude);
+        FileWriter.WriteValue(currentScene.name, "Total Time (in seconds)", runTimerStart);
+
         // Loading the next scene in the order of the current build indices if there is a next one
         // Otherwise quits the program
         if (currentScene.buildIndex != 3)

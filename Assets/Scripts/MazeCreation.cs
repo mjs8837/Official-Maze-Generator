@@ -71,6 +71,12 @@ public class MazeCreation : MonoBehaviour
     {
         GameObject wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
         wall.name = name;
+
+        if (name == "Maze-Floor")
+        {
+            wall.tag = "Floor";
+        }
+
         wall.transform.position = position;
         wall.transform.localScale = scale;
         wall.transform.SetParent(gameObject.transform);
