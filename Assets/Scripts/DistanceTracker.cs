@@ -89,9 +89,7 @@ public class DistanceTracker : MonoBehaviour
     private IEnumerator StartProtocol()
     {
         // Waiting until there is any movement
-        yield return new WaitUntil(() => 
-            Mathf.Abs(locomotion.xDistance) > LOCOMOTION_CONSTRAINT ||
-            Mathf.Abs(locomotion.yDistance) > LOCOMOTION_CONSTRAINT);
+        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.F));
 
         // Starting the protocol
         isStarted = true;
@@ -106,8 +104,6 @@ public class DistanceTracker : MonoBehaviour
     private IEnumerator HideTarget(GameObject target)
     {
         yield return new WaitUntil(() => isStarted);
-        yield return new WaitForSeconds(2.0f);
-
         target.SetActive(false);
     }
 
@@ -167,7 +163,7 @@ public class DistanceTracker : MonoBehaviour
 
         // Loading the next scene in the order of the current build indices if there is a next one
         // Otherwise quits the program
-        if (currentScene.buildIndex != 3)
+        if (currentScene.buildIndex != 2)
         {
             SceneManager.LoadScene(currentScene.buildIndex + 1);
         }
